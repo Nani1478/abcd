@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="e44c0c17-a27f-41c5-b9bd-79945a41fcb6" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="91acdbe9-db47-4182-91e5-c89eb71e5919" >
+		<http:request-connection host="www.thomas-bayer.com" port="80" />
+	</http:request-config>
+	<flow name="munit-test-1Flow" doc:id="1552a78e-eed6-417d-b2cd-2eaebec7d33e" >
+		<http:listener doc:name="Listener" doc:id="c27369fb-50ff-4027-8000-d18221b86d7c" config-ref="HTTP_Listener_config" path="/m"/>
+		<logger level="INFO" doc:name="Logger" doc:id="4a2ac481-f1c7-4cf0-9108-ff2e32b1d002" />
+		<http:request method="GET" doc:name="Request" doc:id="94a0d9fa-1a2e-44dd-b5da-ea70f465840b" config-ref="HTTP_Request_configuration" path="#['/sqlrest/CUSTOMER/' ++ attributes.queryParams.id]"/>
+		<ee:transform doc:name="Transform Message" doc:id="bc594ec1-15ee-46c6-a20e-ce33869fea53" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
